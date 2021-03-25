@@ -14,7 +14,7 @@ if (fs.existsSync('.env')) {
 }
 
 const getEnv = (key: string): string => {
-  let value = process.env[key];
+  const value = process.env[key];
 
   if (!value) {
     logger.error(`${key} ENV variable not found`);

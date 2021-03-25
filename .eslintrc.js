@@ -5,8 +5,6 @@ module.exports = {
     'plugin:@typescript-eslint/recommended',
     'plugin:jest/recommended',
     'prettier',
-    'prettier/react',
-    'prettier/@typescript-eslint',
     'plugin:prettier/recommended',
   ],
   plugins: ['@typescript-eslint', 'jest'],
@@ -25,7 +23,7 @@ module.exports = {
     sourceType: 'module',
     project: './tsconfig.json',
   },
-  quotes: ['single'],
+  // quotes: ['single'],
   rules: {
     'linebreak-style': 'off',
     'prettier/prettier': [

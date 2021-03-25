@@ -1,7 +1,7 @@
-import dotenv from "dotenv";
-import fs from "fs";
+import dotenv from 'dotenv';
+import fs from 'fs';
 
-import logger from "./logger";
+import logger from './logger';
 
 if (fs.existsSync('.env')) {
   logger.debug('Using .env file to supply config environment variables');
@@ -14,7 +14,7 @@ if (fs.existsSync('.env')) {
 }
 
 const getEnv = (key: string): string => {
-  let value = process.env[key];
+  const value = process.env[key];
 
   if (!value) {
     logger.error(`${key} ENV variable not found`);

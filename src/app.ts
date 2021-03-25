@@ -1,15 +1,15 @@
-import bluebird from "bluebird";
-import compression from "compression"; // compresses requests
-import MongoStore from "connect-mongo";
-import cors from "cors";
-import express, { Request, Response } from "express";
-import session from "express-session";
-import lusca from "lusca";
-import mongoose from "mongoose";
-import multer from "multer";
-import passport from "passport";
+import bluebird from 'bluebird';
+import compression from 'compression'; // compresses requests
+import MongoStore from 'connect-mongo';
+import cors from 'cors';
+import express, { Request, Response } from 'express';
+import session from 'express-session';
+import lusca from 'lusca';
+import mongoose from 'mongoose';
+import multer from 'multer';
+import passport from 'passport';
 
-import { MONGODB_URI, SESSION_SECRET } from "./util/secrets";
+import { MONGODB_URI, SESSION_SECRET } from './util/secrets';
 
 // const MongoStore = mongo(session);
 

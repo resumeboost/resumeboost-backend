@@ -1,8 +1,3 @@
-import passport from "passport";
-import { Request, Response, NextFunction } from "express";
-import { User, UserDocument } from "../models/User";
-import "../config/passport";
-
 import async from "async";
 import crypto from "crypto";
 import nodemailer from "nodemailer";
@@ -16,6 +11,7 @@ import "../config/passport";
 
 import mongoose, { Schema, Types, Document } from "mongoose";
 mongoose.set("useFindAndModify", false);
+
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const unauthorizedHandler = (
   req: Request,
@@ -38,9 +34,15 @@ const errorHandler = (
   next();
 };
 
+// TODO: fixed this to make linter work but we
+// need to figure out where this is used and make it work
 const extractUserData = (user: UserDocument) => {
-  const { _id, name, email, phoneNumber, address, type } = user;
-  return { _id, name, email, phoneNumber, address, type };
+  const _id = user._id;
+  const email = user.email;
+  const points = user.points;
+  return { _id, email, points };
+  //const { _id, name, email, phoneNumber, address, type } = user;
+  //return { _id, name, email, phoneNumber, address, type };
 };
 
 /**
@@ -240,7 +242,7 @@ export const updateUser = async (
 /**
  * Returns all users in the given database
  */
-export const getUser = async (
+export const getAllUsers = async (
   req: Request,
   res: Response,
   next: NextFunction

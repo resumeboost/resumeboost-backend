@@ -1,4 +1,4 @@
-import express, { Request, Response } from "express";
+import express from "express";
 import compression from "compression"; // compresses requests
 import session from "express-session";
 import bodyParser from "body-parser";
@@ -19,10 +19,6 @@ const MongoStore = mongo(session);
 // Controllers (route handlers)
 import * as userController from "./controllers/user";
 import * as imageController from "./controllers/image";
-
-// API keys and Passport configuration
-import * as passportConfig from "./config/passport";
-import { User } from "./models/User";
 
 // Create Express server
 const app = express();

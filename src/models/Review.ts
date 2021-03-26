@@ -8,16 +8,16 @@ interface ReviewInfo {
 }
 
 export type ReviewDocument = mongoose.Document & {
-  reviewee_id: string;
-  reviewer_id: string;
-  resume_id: string;
+  revieweeId: string;
+  reviewerId: string;
+  resumeId: string;
   info: ReviewInfo;
 };
 
 const reviewSchema = new mongoose.Schema({
-  reviewee_id: String,
-  reviewer_id: String,
-  resume_id: String,
+  revieweeId: String,
+  reviewerId: String,
+  resumeId: String,
   info: {
     visual: Number,
     content: Number,

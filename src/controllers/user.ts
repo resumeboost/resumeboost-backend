@@ -1,15 +1,11 @@
-import async from "async";
-import crypto from "crypto";
-import nodemailer from "nodemailer";
 import passport from "passport";
-import { User, UserDocument, AuthToken } from "../models/User";
+import { User, UserDocument } from "../models/User";
 import { Request, Response, NextFunction } from "express";
 import { IVerifyOptions } from "passport-local";
-import { WriteError } from "mongodb";
 import { check, sanitize, validationResult } from "express-validator";
 import "../config/passport";
 
-import mongoose, { Schema, Types, Document } from "mongoose";
+import mongoose from "mongoose";
 mongoose.set("useFindAndModify", false);
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any

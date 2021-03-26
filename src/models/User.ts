@@ -1,5 +1,5 @@
 import bcrypt from "bcrypt-nodejs";
-import mongoose, { Schema, Types, Document } from "mongoose";
+import mongoose, { Document } from "mongoose";
 
 export interface AuthToken {
   accessToken: string;

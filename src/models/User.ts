@@ -1,78 +1,47 @@
-import bcrypt from "bcrypt-nodejs";
-import mongoose, { Document, Schema, Types } from "mongoose";
+import mongoose from "mongoose";
 
-export type UserDocument = mongoose.Document & {
+interface Employer {
   name: string;
-  email: string;
-  password: string;
-  phoneNumber: string;
-  address: string;
-  type: "Customer" | "Staff" | "Admin";
-  tokens: AuthToken[];
-  comparePassword: comparePasswordFunction;
-};
-
-type comparePasswordFunction = (
-  candidatePassword: string,
-  cb: (err: any, isMatch: any) => {}
-) => void;
-
-export interface AuthToken {
-  accessToken: string;
-  kind: string;
+  industries: string[];
+  logo: string;
 }
 
-const userSchema = new mongoose.Schema(
-  {
-    name: String,
-    email: { type: String, unique: true },
-    password: String,
-    phoneNumber: String,
-    address: String,
-    type: {
-      type: String,
-      enum: ["Customer", "Staff", "Admin"],
-    },
-    tokens: Array,
-  },
-  { timestamps: true }
-);
+interface Resume {
+  link: string;
+  createdAt: Date;
+  isActive: boolean;
+}
 
-/**
- * Password hash middleware.
- */
-userSchema.pre("save", function save(next) {
-  const user = this as UserDocument;
-  if (!user.isModified("password")) {
-    return next();
-  }
-  bcrypt.genSalt(10, (err, salt) => {
-    if (err) {
-      return next(err);
-    }
-    bcrypt.hash(user.password, salt, undefined, (err, hash) => {
-      if (err) {
-        return next(err);
-      }
-      user.password = hash;
-      next();
-    });
-  });
-});
-
-const comparePassword: comparePasswordFunction = function (
-  candidatePassword,
-  cb
-) {
-  bcrypt.compare(
-    candidatePassword,
-    this.password,
-    (err: mongoose.Error, isMatch: boolean) => {
-      cb(err, isMatch);
-    }
-  );
+export type UserDocument = mongoose.Document & {
+  email: string;
+  password: string;
+  points: number;
+  targetCompanies: Employer[];
+  targetPositions: string[];
+  resumes: Resume[];
+  createdAt: Date;
 };
 
-userSchema.methods.comparePassword = comparePassword;
+const Employer = new mongoose.Schema({
+  name: String,
+  industries: [String],
+  logo: String,
+});
+
+const Resume = new mongoose.Schema({
+  link: String,
+  createdAt: Date,
+  isActive: Boolean,
+});
+
+const userSchema = new mongoose.Schema({
+  email: { type: String, unique: true },
+  password: String,
+  points: Number,
+  targetCompanies: [Employer],
+  targetPositions: [String],
+  resumes: [Resume],
+  createdAt: Date,
+});
 
 export const User = mongoose.model<UserDocument>("User", userSchema);

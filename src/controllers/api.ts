@@ -1,12 +1,13 @@
-import { Response, Request, NextFunction } from "express";
-import { User, UserDocument, UsageInstance } from "../models/User";
-import { AWS_BUCKET_NAME, AWS_ID, AWS_SECRET } from "../util/secrets";
 import S3 from "aws-sdk/clients/s3";
-import { v4 as uuidv4 } from "uuid";
-import FormData from "form-data";
 import axios from "axios";
+import { NextFunction, Request, Response } from "express";
+import FormData from "form-data";
 import * as fs from "fs";
 import * as util from "util";
+import { v4 as uuidv4 } from "uuid";
+
+import { User, UserDocument } from "../models/User";
+import { AWS_BUCKET_NAME, AWS_ID, AWS_SECRET } from "../util/secrets";
 
 const s3 = new S3({
   accessKeyId: AWS_ID,

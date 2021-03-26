@@ -1,31 +1,27 @@
-import express, { Request, Response } from "express";
-import compression from "compression"; // compresses requests
-import session from "express-session";
-import bodyParser from "body-parser";
-import lusca from "lusca";
-import mongo from "connect-mongo";
-import flash from "express-flash";
-import path from "path";
-import mongoose from "mongoose";
-import passport from "passport";
 import bluebird from "bluebird";
+import bodyParser from "body-parser";
+import compression from "compression"; // compresses requests
+import mongo from "connect-mongo";
 import cors from "cors";
+import express, { Request, Response } from "express";
+import flash from "express-flash";
+import session from "express-session";
+import lusca from "lusca";
+import mongoose from "mongoose";
 import multer from "multer";
-
-import { MONGODB_URI, SESSION_SECRET } from "./util/secrets";
-
-const MongoStore = mongo(session);
-
-// Controllers (route handlers)
-import * as userController from "./controllers/user";
-import * as menuController from "./controllers/menu";
-import * as apiController from "./controllers/api";
-import * as orderController from "./controllers/order";
-import * as imageController from "./controllers/image";
+import passport from "passport";
+import path from "path";
 
 // API keys and Passport configuration
 import * as passportConfig from "./config/passport";
+// Controllers (route handlers)
+import * as apiController from "./controllers/api";
+import * as imageController from "./controllers/image";
+import * as userController from "./controllers/user";
 import { User } from "./models/User";
+import { MONGODB_URI, SESSION_SECRET } from "./util/secrets";
+
+const MongoStore = mongo(session);
 
 // Create Express server
 const app = express();

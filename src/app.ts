@@ -20,6 +20,7 @@ const MongoStore = mongo(session);
 
 // Controllers (route handlers)
 import * as userController from "./controllers/user";
+import * as reviewController from "./controllers/review";
 import * as imageController from "./controllers/image";
 
 // Create Express server
@@ -120,10 +121,17 @@ const upload = multer({
  * Primary app routes.
  */
 app.post("/login", userController.postLogin);
-app.get("/user", userController.getUser);
+app.get("/user", userController.getAllUsers);
 app.get("/logout", userController.logout);
 app.post("/signup", userController.postSignup);
 app.post("/user/update/:id", userController.updateUser);
+app.put("/addUser", userController.addUser);
+app.put("/resume/:id/active", userController.putResumeActive);
+app.put("/user/:id/resume", userController.updateUserResume);
+
+app.put("/review", reviewController.postReview);
+app.get("/review/:id", reviewController.getReviewsByUser);
+app.get("/getreview", reviewController.getAllReviews);
 
 app.post("/image", imageController.postImage);
 

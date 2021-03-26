@@ -248,7 +248,10 @@ export const getAllUsers = async (
     .catch((err) => res.status(400).json("Error: " + err));
 };
 
-export const putResumeActive = async (
+/**
+ * For this version, we are assuming every user has only one resume
+ */
+ export const putResumeActive = async (
   req: Request,
   res: Response,
   next: NextFunction
@@ -260,5 +263,62 @@ export const putResumeActive = async (
     user.save().then(() => res.json("Resume was made active"));
   } catch (err) {
     return res.status(400).json("Error: " + err);
+  }
+};
+
+/**
+ * Function that can update user resume information in the database
+ */
+ export const updateUserResume = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  User.findOneAndUpdate(
+    { _id: req.params.id },
+    { $set: req.body },
+    { new: true }
+  )
+    .then((user) => {
+      res.json("User has been updated successfully!");
+    })
+    .catch((err) => res.status(400).json("Error: " + err));
+};
+
+
+/**
+ * Will use function to create users for testing purposes. Not in design document, purely for testing purposes.
+ */
+ export const addUser = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const email = req.body.email;
+    const password = req.body.password;
+    const points = Number(req.body.points);
+    const targetCompanies = req.body.targetCompanies;
+    const targetPositions = req.body.targetPositions;
+    const resumes = req.body.resumes;
+    const createdAt = req.body.createdAt;
+
+    const newUser = new User({
+      email,
+      password,
+      points,
+      targetCompanies,
+      targetPositions,
+      resumes,
+      createdAt,
+    });
+
+    newUser
+      .save()
+      .then(() => res.json("User added to Database!"))
+      .catch((err) => res.status(400).json("Error: " + err));
+  } catch (e) {
+    console.log(e);
+    res.status(500).json(e);
   }
 };

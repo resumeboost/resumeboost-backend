@@ -1,22 +1,36 @@
-import bluebird from 'bluebird';
-import compression from 'compression'; // compresses requests
-import MongoStore from 'connect-mongo';
-import cors from 'cors';
-import express, { Request, Response } from 'express';
-import session from 'express-session';
-import lusca from 'lusca';
-import mongoose from 'mongoose';
-import multer from 'multer';
-import passport from 'passport';
+import express, { Request, Response } from "express";
+import compression from "compression"; // compresses requests
+import session from "express-session";
+import bodyParser from "body-parser";
+import lusca from "lusca";
+import mongo from "connect-mongo";
+import flash from "express-flash";
+import path from "path";
+import mongoose from "mongoose";
+import passport from "passport";
+import bluebird from "bluebird";
+import cors from "cors";
+import multer from "multer";
 
-import { MONGODB_URI, SESSION_SECRET } from './util/secrets';
+import { MONGODB_URI, SESSION_SECRET } from "./util/secrets";
 
-// const MongoStore = mongo(session);
+const MongoStore = mongo(session);
+
+// Controllers (route handlers)
+import * as userController from "./controllers/user";
+import * as menuController from "./controllers/menu";
+import * as apiController from "./controllers/api";
+import * as orderController from "./controllers/order";
+import * as imageController from "./controllers/image";
+
+// API keys and Passport configuration
+import * as passportConfig from "./config/passport";
+import { User } from "./models/User";
 
 // Create Express server
 const app = express();
 
-app.use(cors({ credentials: true, origin: 'http://localhost:3000' }));
+app.use(cors({ credentials: true, origin: "http://localhost:3000" }));
 
 // Connect to MongoDB
 const mongoUrl = MONGODB_URI;
@@ -30,7 +44,7 @@ mongoose
   })
   .then(() => {
     /** ready to use. The `mongoose.connect()` promise resolves to undefined. */
-    console.log('MongoDB connected successfully');
+    console.log("MongoDB connected successfully");
   })
   .catch((err) => {
     console.log(
@@ -40,38 +54,39 @@ mongoose
   });
 
 // Express configuration
-app.set('port', process.env.PORT || 3000);
+app.set("port", process.env.PORT || 3000);
 app.use(compression());
-app.use(express.json());
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
 app.use(
   session({
     resave: true,
     saveUninitialized: true,
     secret: SESSION_SECRET,
-    store: MongoStore.create({
-      mongoUrl: mongoUrl,
-      // autoReconnect: true,
+    store: new MongoStore({
+      url: mongoUrl,
+      autoReconnect: true,
     }),
   })
 );
 app.use(passport.initialize());
 app.use(passport.session());
-app.use(lusca.xframe('SAMEORIGIN'));
+app.use(flash());
+app.use(lusca.xframe("SAMEORIGIN"));
 app.use(lusca.xssProtection(true));
 app.use((req, res, next) => {
   res.locals.user = req.user;
   next();
 });
-
 app.use((req, res, next) => {
   // After successful login, redirect back to the intended page
   if (
     (!req.user &&
-      req.path !== '/login' &&
-      req.path !== '/signup' &&
+      req.path !== "/login" &&
+      req.path !== "/signup" &&
       !req.path.match(/^\/auth/) &&
       !req.path.match(/\./)) ||
-    (req.user && req.path == '/account')
+    (req.user && req.path == "/account")
   ) {
     // @ts-ignore
     req.session.returnTo = req.path;
@@ -83,8 +98,62 @@ app.use((req, res, next) => {
   next();
 });
 
-app.get('/', (req, res, next) => {
-  res.send('Hello');
-});
+app.use(
+  express.static(path.join(__dirname, "public"), { maxAge: 31557600000 })
+);
+
+const storage = multer.memoryStorage();
+
+const upload = multer({
+  storage,
+  fileFilter: (req, file, cb) => {
+    if (
+      file.mimetype == "image/png" ||
+      file.mimetype == "image/jpg" ||
+      file.mimetype == "image/jpeg"
+    ) {
+      cb(null, true);
+    } else {
+      cb(null, false);
+      return cb(new Error("Only .png, .jpg and .jpeg format allowed!"));
+    }
+  },
+  limits: { fileSize: 3 * 1024 * 1024 },
+}).single("image"); //image is the key, and key is needed whenever the file is uploaded
+
+/*
+ * Primary app routes.
+ */
+app.post("/login", userController.postLogin);
+app.get("/user", userController.getUser);
+app.get("/logout", userController.logout);
+app.post("/signup", userController.postSignup);
+app.post("/user/update/:id", userController.updateUser);
+
+// Menu Routes
+app.get("/menu", menuController.getMenu);
+app.get("/menu/:id", menuController.getMenuItem);
+app.put("/menu/add", upload, menuController.addMenuItem);
+app.post("/menu/update/:id", upload, menuController.updateMenuItem);
+app.delete("/menu/:id", menuController.deleteMenuItem);
+
+app.post("/order", orderController.postOrder);
+app.get("/order/outstanding", orderController.getOrderOutstanding);
+app.put("/order/outstanding/:id", orderController.putOrderOutstandingById);
+app.get("/order/summary", orderController.getOrderSummary);
+
+app.post("/image", imageController.postImage);
+
+/**
+ * API examples routes.
+ */
+// app.post(
+//   "/api/odometer",
+//   passport.authenticate("basic", { session: false }),
+//   upload,
+//   apiController.getOdometerReading
+// );
+// app.get("/api", apiController.getApi);
+// app.get("/api/facebook", passportConfig.isAuthenticated, passportConfig.isAuthorized, apiController.getFacebook);
 
 export default app;

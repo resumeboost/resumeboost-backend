@@ -124,11 +124,11 @@ const upload = multer({
 /*
  * Primary app routes.
  */
-app.post("/login", userController.postLogin);
+//app.post("/login", userController.postLogin);
 app.get("/user", userController.getUser);
-app.get("/logout", userController.logout);
-app.post("/signup", userController.postSignup);
-app.post("/user/update/:id", userController.updateUser);
+//app.get("/logout", userController.logout);
+//app.post("/signup", userController.postSignup);
+//app.post("/user/update/:id", userController.updateUser);
 
 app.post("/image", imageController.postImage);
 

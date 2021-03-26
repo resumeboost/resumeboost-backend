@@ -2,13 +2,14 @@ import bluebird from 'bluebird';
 import compression from 'compression'; // compresses requests
 import MongoStore from 'connect-mongo';
 import cors from 'cors';
-import express, { Request, Response } from 'express';
+import express from 'express';
 import session from 'express-session';
 import lusca from 'lusca';
 import mongoose from 'mongoose';
-import multer from 'multer';
 import passport from 'passport';
 
+import * as userController from './controllers/user';
+import logger from './util/logger';
 import { MONGODB_URI, SESSION_SECRET } from './util/secrets';
 
 // const MongoStore = mongo(session);
@@ -30,10 +31,10 @@ mongoose
   })
   .then(() => {
     /** ready to use. The `mongoose.connect()` promise resolves to undefined. */
-    console.log('MongoDB connected successfully');
+    logger.info('MongoDB connected successfully');
   })
   .catch((err) => {
-    console.log(
+    logger.error(
       `MongoDB connection error. Please make sure MongoDB is running. ${err}`
     );
     // process.exit();
@@ -49,7 +50,7 @@ app.use(
     saveUninitialized: true,
     secret: SESSION_SECRET,
     store: MongoStore.create({
-      mongoUrl: mongoUrl,
+      mongoUrl,
       // autoReconnect: true,
     }),
   })
@@ -63,28 +64,13 @@ app.use((req, res, next) => {
   next();
 });
 
-app.use((req, res, next) => {
-  // After successful login, redirect back to the intended page
-  if (
-    (!req.user &&
-      req.path !== '/login' &&
-      req.path !== '/signup' &&
-      !req.path.match(/^\/auth/) &&
-      !req.path.match(/\./)) ||
-    (req.user && req.path == '/account')
-  ) {
-    // @ts-ignore
-    req.session.returnTo = req.path;
-  }
-  // else if (req.user && req.path == "/account") {
-  //   // @ts-ignore
-  //   req.session.returnTo = req.path;
-  // }
-  next();
-});
-
-app.get('/', (req, res, next) => {
-  res.send('Hello');
-});
+/*
+ * App Routes
+ */
+app.post('/login', userController.postLogin);
+app.get('/user', userController.getUser);
+app.get('/logout', userController.logout);
+app.post('/signup', userController.postSignup);
+app.post('/user/update/:id', userController.updateUser);
 
 export default app;

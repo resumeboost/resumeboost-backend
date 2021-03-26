@@ -25,6 +25,8 @@ module.exports = {
   },
   // quotes: ['single'],
   rules: {
+    '@typescript-eslint/ban-ts-comment': 'off',
+    '@typescript-eslint/explicit-module-boundary-types': 'off',
     'linebreak-style': 'off',
     'prettier/prettier': [
       'error',

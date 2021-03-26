@@ -1,27 +1,24 @@
-import bluebird from "bluebird";
-import bodyParser from "body-parser";
+import express from "express";
 import compression from "compression"; // compresses requests
-import mongo from "connect-mongo";
-import cors from "cors";
-import express, { Request, Response } from "express";
-import flash from "express-flash";
 import session from "express-session";
+import bodyParser from "body-parser";
 import lusca from "lusca";
-import mongoose from "mongoose";
-import multer from "multer";
-import passport from "passport";
+import mongo from "connect-mongo";
+import flash from "express-flash";
 import path from "path";
+import mongoose from "mongoose";
+import passport from "passport";
+import bluebird from "bluebird";
+import cors from "cors";
+import multer from "multer";
 
-// API keys and Passport configuration
-import * as passportConfig from "./config/passport";
-// Controllers (route handlers)
-import * as apiController from "./controllers/api";
-import * as imageController from "./controllers/image";
-import * as userController from "./controllers/user";
-import { User } from "./models/User";
 import { MONGODB_URI, SESSION_SECRET } from "./util/secrets";
 
 const MongoStore = mongo(session);
+
+// Controllers (route handlers)
+import * as userController from "./controllers/user";
+import * as imageController from "./controllers/image";
 
 // Create Express server
 const app = express();
@@ -120,11 +117,11 @@ const upload = multer({
 /*
  * Primary app routes.
  */
-//app.post("/login", userController.postLogin);
+app.post("/login", userController.postLogin);
 app.get("/user", userController.getUser);
-//app.get("/logout", userController.logout);
-//app.post("/signup", userController.postSignup);
-//app.post("/user/update/:id", userController.updateUser);
+app.get("/logout", userController.logout);
+app.post("/signup", userController.postSignup);
+app.post("/user/update/:id", userController.updateUser);
 
 app.post("/image", imageController.postImage);
 

@@ -1,12 +1,5 @@
 import S3 from "aws-sdk/clients/s3";
-import axios from "axios";
-import { NextFunction, Request, Response } from "express";
-import FormData from "form-data";
-import * as fs from "fs";
-import * as util from "util";
-import { v4 as uuidv4 } from "uuid";
-
-import { User, UserDocument } from "../models/User";
+import { Request } from "express";
 import { AWS_BUCKET_NAME, AWS_ID, AWS_SECRET } from "../util/secrets";
 
 const s3 = new S3({

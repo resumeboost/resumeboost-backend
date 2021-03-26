@@ -130,18 +130,6 @@ app.get("/logout", userController.logout);
 app.post("/signup", userController.postSignup);
 app.post("/user/update/:id", userController.updateUser);
 
-// Menu Routes
-app.get("/menu", menuController.getMenu);
-app.get("/menu/:id", menuController.getMenuItem);
-app.put("/menu/add", upload, menuController.addMenuItem);
-app.post("/menu/update/:id", upload, menuController.updateMenuItem);
-app.delete("/menu/:id", menuController.deleteMenuItem);
-
-app.post("/order", orderController.postOrder);
-app.get("/order/outstanding", orderController.getOrderOutstanding);
-app.put("/order/outstanding/:id", orderController.putOrderOutstandingById);
-app.get("/order/summary", orderController.getOrderSummary);
-
 app.post("/image", imageController.postImage);
 
 /**

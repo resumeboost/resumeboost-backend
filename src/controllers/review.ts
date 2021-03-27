@@ -37,7 +37,9 @@ export const postReview = async (
     // need to make these three operations atomic
     newReview
       .save()
-      .then(() => res.json("Thanks for the review. Your points will be added soon!!"))
+      .then(() =>
+        res.json("Thanks for the review. Your points will be added soon!!")
+      )
       .catch((err) => res.status(400).json("Error: " + err));
     reviewee.save();
     reviewer.save();
@@ -68,7 +70,7 @@ export const getReviewsByUser = async (
 };
 
 /**
- * Returns all reviews in the given database. 
+ * Returns all reviews in the given database.
  */
 export const getAllReviews = async (
   req: Request,

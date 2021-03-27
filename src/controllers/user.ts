@@ -260,7 +260,7 @@ export const getAllUsers = async (
 /**
  * For this version, we are assuming every user has only one resume
  */
- export const putResumeActive = async (
+export const putResumeActive = async (
   req: Request,
   res: Response,
   next: NextFunction
@@ -278,7 +278,7 @@ export const getAllUsers = async (
 /**
  * Function that can update user resume information in the database
  */
- export const updateUserResume = async (
+export const updateUserResume = async (
   req: Request,
   res: Response,
   next: NextFunction
@@ -294,13 +294,13 @@ export const getAllUsers = async (
   user.resumes[0].isActive = true;
   const now = new Date();
   user.resumes[0].createdAt = now;
-  user.save()
+  user
+    .save()
     .then((user) => {
       res.json("User has been updated successfully!");
     })
     .catch((err) => res.status(400).json("Error: " + err));
 };
-
 
 /**
  * Will use function to create users for testing purposes. Not in design document, purely for testing purposes.

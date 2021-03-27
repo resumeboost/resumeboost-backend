@@ -118,6 +118,7 @@ const upload = multer({
  */
 app.post("/login", userController.postLogin);
 app.get("/user", userController.getAllUsers);
+
 app.get("/logout", userController.logout);
 app.post("/signup", userController.postSignup);
 app.post("/user/update/:id", userController.updateUser);
@@ -140,6 +141,8 @@ app.get("/getresume", async (req, res, next) => {
 
 app.post("/image", imageController.postImage);
 
+app.post("/review", reviewController.postReview);
+app.get("/review/next", reviewController.getNextReview);
 /**
  * API examples routes.
  */

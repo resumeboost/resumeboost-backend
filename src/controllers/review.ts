@@ -47,7 +47,7 @@ export const postReview = async (
     await reviewee.save();
     await reviewer.save();
 
-    return res.status(200).json("points: " + reviewer.points);
+    return res.status(200).json({ points: reviewer.points });
   } catch (err) {
     console.log(err);
     return res.status(400).json("Error: " + err);

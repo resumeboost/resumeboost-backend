@@ -18,8 +18,9 @@ export const postReview = async (
   res: Response,
   next: NextFunction
 ) => {
-  const revieweeId = req.body.revieweeId;
-  const reviewerId = req.body.reviewerId;
+
+  const reviewee_id = req.body.revieweeId;
+  const reviewer_id = req.body.reviewerId;
 
   const newReview = new Review({
     revieweeId: req.body.revieweeId,
@@ -29,25 +30,21 @@ export const postReview = async (
   });
 
   try {
-    const reviewee = await User.findById(revieweeId);
-    if (!reviewee) {
-      throw "Invalid reviewee id";
-    }
-
-    const reviewer = await User.findById(reviewerId);
-    if (!reviewer) {
-      throw "Invalid reviewer id";
-    }
+    const reviewee = await User.findById(reviewee_id);
+    const reviewer = await User.findById(reviewer_id);
 
     reviewee.points = adjustRevieweePoints(reviewee.points);
     reviewer.points = adjustReviewerPoints(reviewer.points);
 
     // need to make these three operations atomic
-    await newReview.save();
-    await reviewee.save();
-    await reviewer.save();
-
-    return res.status(200).json({ points: reviewer.points });
+    newReview
+      .save()
+      .then(() =>
+        res.json("Thanks for the review. Your points will be added soon!!")
+      )
+      .catch((err) => res.status(400).json("Error: " + err));
+    reviewee.save();
+    reviewer.save();
   } catch (err) {
     console.log(err);
     return res.status(400).json("Error: " + err);
@@ -118,4 +115,37 @@ export const getNextReview = async (
     console.log(err);
     return res.status(400).json("Error: " + err);
   }
+};
+
+/**
+ * This method returns all the reviews made by a particular user
+ */
+export const getReviewsByUser = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    Review.find({ revieweeId: req.params.id })
+      .then((review) => {
+        res.json(review);
+      })
+      .catch((err) => res.status(400).json("Error: " + err));
+  } catch (err) {
+    console.log(err);
+    return res.status(400).json("Error: " + err);
+  }
+};
+
+/**
+ * Returns all reviews in the given database.
+ */
+export const getAllReviews = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  Review.find()
+    .then((review) => res.json(review))
+    .catch((err) => res.status(400).json("Error: " + err));
 };

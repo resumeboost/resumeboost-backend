@@ -4,6 +4,10 @@ import { Request, Response, NextFunction } from "express";
 import { IVerifyOptions } from "passport-local";
 import { check, sanitize, validationResult } from "express-validator";
 import "../config/passport";
+import S3 from "aws-sdk/clients/s3";
+import { AWS_BUCKET_NAME, AWS_ID, AWS_SECRET } from "../util/secrets";
+import { v4 as uuidv4 } from "uuid";
+import { uploadToS3 } from "./api";
 
 import mongoose from "mongoose";
 mongoose.set("useFindAndModify", false);
@@ -40,6 +44,11 @@ const extractUserData = (user: UserDocument) => {
   //const { _id, name, email, phoneNumber, address, type } = user;
   //return { _id, name, email, phoneNumber, address, type };
 };
+
+const s3 = new S3({
+  accessKeyId: AWS_ID,
+  secretAccessKey: AWS_SECRET,
+});
 
 /**
  * Sign in using email and password.
@@ -248,6 +257,9 @@ export const getAllUsers = async (
     .catch((err) => res.status(400).json("Error: " + err));
 };
 
+/**
+ * For this version, we are assuming every user has only one resume
+ */
 export const putResumeActive = async (
   req: Request,
   res: Response,
@@ -263,34 +275,66 @@ export const putResumeActive = async (
   }
 };
 
-export const addUser = async (
+/**
+ * Function that can update user resume information in the database
+ */
+export const updateUserResume = async (
   req: Request,
   res: Response,
   next: NextFunction
 ) => {
-  try {
-    const email = req.body.email;
-    const password = req.body.password;
-    const points = Number(req.body.points);
-    const targetCompanies = req.body.targetCompanies;
-    const targetPositions = req.body.targetPositions;
-    const resumes = req.body.resumes;
-    const createdAt = req.body.createdAt;
-    const newUser = new User({
-      email,
-      password,
-      points,
-      targetCompanies,
-      targetPositions,
-      resumes,
-      createdAt,
-    });
-    newUser
-      .save()
-      .then(() => res.json("User added to Database!"))
-      .catch((err) => res.status(400).json("Error: " + err));
-  } catch (e) {
-    console.log(e);
-    res.status(500).json(e);
-  }
+  console.log("called updateUserResume");
+  const myFile = req.file.originalname.split(".");
+  const fileType = myFile[myFile.length - 1];
+  const filename = uuidv4() + "." + fileType;
+  const imgUrl = await uploadToS3(req, filename);
+
+  const user = await User.findById(req.params.id);
+  user.resumes[0].link = filename;
+  user.resumes[0].isActive = true;
+  const now = new Date();
+  user.resumes[0].createdAt = now;
+  user
+    .save()
+    .then((user) => {
+      res.json("User has been updated successfully!");
+    })
+    .catch((err) => res.status(400).json("Error: " + err));
 };
+
+/**
+ * Will use function to create users for testing purposes. Not in design document, purely for testing purposes.
+ */
+//  export const addUser = async (
+//   req: Request,
+//   res: Response,
+//   next: NextFunction
+// ) => {
+//   try {
+//     const email = req.body.email;
+//     const password = req.body.password;
+//     const points = Number(req.body.points);
+//     const targetCompanies = req.body.targetCompanies;
+//     const targetPositions = req.body.targetPositions;
+//     const resumes = req.body.resumes;
+//     const createdAt = req.body.createdAt;
+
+//     const newUser = new User({
+//       email,
+//       password,
+//       points,
+//       targetCompanies,
+//       targetPositions,
+//       resumes,
+//       createdAt,
+//     });
+
+//     newUser
+//       .save()
+//       .then(() => res.json("User added to Database!"))
+//       .catch((err) => res.status(400).json("Error: " + err));
+//   } catch (e) {
+//     console.log(e);
+//     res.status(500).json(e);
+//   }
+// };

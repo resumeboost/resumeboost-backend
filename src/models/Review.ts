@@ -14,16 +14,19 @@ export type ReviewDocument = mongoose.Document & {
   info: ReviewInfo;
 };
 
-const reviewSchema = new mongoose.Schema({
-  revieweeId: String,
-  reviewerId: String,
-  resumeId: String,
-  info: {
-    visual: Number,
-    content: Number,
-    relevance: Number,
-    feedback: String,
+const reviewSchema = new mongoose.Schema(
+  {
+    revieweeId: String,
+    reviewerId: String,
+    resumeId: String,
+    info: {
+      visual: Number,
+      content: Number,
+      relevance: Number,
+      feedback: String,
+    },
   },
-});
+  { timestamps: true }
+);
 
 export const Review = mongoose.model<ReviewDocument>("Review", reviewSchema);

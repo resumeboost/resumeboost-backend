@@ -1,27 +1,26 @@
-import express from "express";
-import compression from "compression"; // compresses requests
-import session from "express-session";
-import bodyParser from "body-parser";
-import lusca from "lusca";
-import mongo from "connect-mongo";
-import flash from "express-flash";
-import path from "path";
-import mongoose from "mongoose";
-import passport from "passport";
 import bluebird from "bluebird";
+import bodyParser from "body-parser";
+import compression from "compression"; // compresses requests
+import mongo from "connect-mongo";
 import cors from "cors";
+import express from "express";
+import flash from "express-flash";
+import session from "express-session";
+import lusca from "lusca";
+import mongoose from "mongoose";
 import multer from "multer";
+import passport from "passport";
+import path from "path";
 
+import * as api from "./controllers/api";
+import * as imageController from "./controllers/image";
+import * as reviewController from "./controllers/review";
+// Controllers (route handlers)
+import * as userController from "./controllers/user";
 //New comment
-
 import { MONGODB_URI, SESSION_SECRET } from "./util/secrets";
 
 const MongoStore = mongo(session);
-
-// Controllers (route handlers)
-import * as userController from "./controllers/user";
-import * as reviewController from "./controllers/review";
-import * as imageController from "./controllers/image";
 
 // Create Express server
 const app = express();
@@ -129,6 +128,15 @@ app.put("/user/:id/resume", upload, userController.updateUserResume);
 app.put("/review", reviewController.postReview);
 app.get("/review/:id", reviewController.getReviewsByUser);
 app.get("/getreview", reviewController.getAllReviews);
+
+//Test endpoint
+app.get("/getresume", async (req, res, next) => {
+  const ret = await api.downloadFromS3(
+    req,
+    "c6250edb-8c9b-45a9-85bd-2843de48a519.pdf"
+  );
+  res.json({ fileData: ret });
+});
 
 app.post("/image", imageController.postImage);
 

@@ -290,7 +290,7 @@ export const updateUserResume = async (
   const imgUrl = await uploadToS3(req, filename);
 
   const user = await User.findById(req.params.id);
-  user.resumes[0].link = imgUrl;
+  user.resumes[0].link = filename;
   user.resumes[0].isActive = true;
   const now = new Date();
   user.resumes[0].createdAt = now;

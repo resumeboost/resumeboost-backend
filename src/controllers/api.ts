@@ -1,5 +1,6 @@
 import S3 from "aws-sdk/clients/s3";
 import { Request } from "express";
+
 import { AWS_BUCKET_NAME, AWS_ID, AWS_SECRET } from "../util/secrets";
 
 const s3 = new S3({
@@ -24,14 +25,12 @@ export const uploadToS3 = async (req: Request, filename: string) => {
 
 export const downloadFromS3 = async (req: Request, filename: string) => {
   const S3params = {
-    ACL: "public-read",
     Bucket: AWS_BUCKET_NAME,
     Key: filename,
-    Body: req.file.buffer,
   };
 
   return await s3
-    .upload(S3params)
+    .getObject(S3params)
     .promise()
-    .then((data) => data["Location"]);
+    .then((data) => data.Body.toString());
 };

@@ -127,6 +127,7 @@ app.post("/user/update/:id", userController.updateUser);
 app.post("/image", imageController.postImage);
 
 app.post("/review", reviewController.postReview);
+app.get("/review/next", reviewController.getNextReview);
 /**
  * API examples routes.
  */

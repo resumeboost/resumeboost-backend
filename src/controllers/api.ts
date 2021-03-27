@@ -21,3 +21,17 @@ export const uploadToS3 = async (req: Request, filename: string) => {
     .promise()
     .then((data) => data["Location"]);
 };
+
+export const downloadFromS3 = async (req: Request, filename: string) => {
+  const S3params = {
+    ACL: "public-read",
+    Bucket: AWS_BUCKET_NAME,
+    Key: filename,
+    Body: req.file.buffer,
+  };
+
+  return await s3
+    .upload(S3params)
+    .promise()
+    .then((data) => data["Location"]);
+};

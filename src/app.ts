@@ -103,19 +103,16 @@ const storage = multer.memoryStorage();
 const upload = multer({
   storage,
   fileFilter: (req, file, cb) => {
-    if (
-      file.mimetype == "image/png" ||
-      file.mimetype == "image/jpg" ||
-      file.mimetype == "image/jpeg"
-    ) {
+    console.log("reached file filter");
+    if (file.mimetype == "application/pdf") {
       cb(null, true);
     } else {
       cb(null, false);
-      return cb(new Error("Only .png, .jpg and .jpeg format allowed!"));
+      return cb(new Error("Only .pdf file format allowed!"));
     }
   },
   limits: { fileSize: 3 * 1024 * 1024 },
-}).single("image"); //image is the key, and key is needed whenever the file is uploaded
+}).single("file"); //file is the key, and key is needed whenever the file is uploaded
 
 /*
  * Primary app routes.
@@ -127,7 +124,7 @@ app.post("/signup", userController.postSignup);
 app.post("/user/update/:id", userController.updateUser);
 app.put("/addUser", userController.addUser);
 app.put("/resume/:id/active", userController.putResumeActive);
-app.put("/user/:id/resume", userController.updateUserResume);
+app.put("/user/:id/resume", upload, userController.updateUserResume);
 
 app.put("/review", reviewController.postReview);
 app.get("/review/:id", reviewController.getReviewsByUser);

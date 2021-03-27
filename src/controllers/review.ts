@@ -37,7 +37,7 @@ export const postReview = async (
     // need to make these three operations atomic
     newReview
       .save()
-      .then(() => res.json("Thanks for the review"))
+      .then(() => res.json("Thanks for the review. Your points will be added soon!!"))
       .catch((err) => res.status(400).json("Error: " + err));
     reviewee.save();
     reviewer.save();

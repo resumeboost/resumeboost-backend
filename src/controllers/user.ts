@@ -4,6 +4,10 @@ import { Request, Response, NextFunction } from "express";
 import { IVerifyOptions } from "passport-local";
 import { check, sanitize, validationResult } from "express-validator";
 import "../config/passport";
+import S3 from "aws-sdk/clients/s3";
+import { AWS_BUCKET_NAME, AWS_ID, AWS_SECRET } from "../util/secrets";
+import { v4 as uuidv4 } from "uuid";
+import { uploadToS3 } from "./api";
 
 import mongoose from "mongoose";
 mongoose.set("useFindAndModify", false);
@@ -40,6 +44,11 @@ const extractUserData = (user: UserDocument) => {
   //const { _id, name, email, phoneNumber, address, type } = user;
   //return { _id, name, email, phoneNumber, address, type };
 };
+
+const s3 = new S3({
+  accessKeyId: AWS_ID,
+  secretAccessKey: AWS_SECRET,
+});
 
 /**
  * Sign in using email and password.
@@ -274,11 +283,18 @@ export const getAllUsers = async (
   res: Response,
   next: NextFunction
 ) => {
-  User.findOneAndUpdate(
-    { _id: req.params.id },
-    { $set: req.body },
-    { new: true }
-  )
+  console.log("called updateUserResume");
+  const myFile = req.file.originalname.split(".");
+  const fileType = myFile[myFile.length - 1];
+  const filename = uuidv4() + "." + fileType;
+  const imgUrl = await uploadToS3(req, filename);
+
+  const user = await User.findById(req.params.id);
+  user.resumes[0].link = imgUrl;
+  user.resumes[0].isActive = true;
+  const now = new Date();
+  user.resumes[0].createdAt = now;
+  user.save()
     .then((user) => {
       res.json("User has been updated successfully!");
     })

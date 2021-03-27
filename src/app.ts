@@ -19,6 +19,7 @@ const MongoStore = mongo(session);
 // Controllers (route handlers)
 import * as userController from "./controllers/user";
 import * as imageController from "./controllers/image";
+import * as reviewController from "./controllers/review";
 
 // Create Express server
 const app = express();
@@ -125,6 +126,7 @@ app.post("/user/update/:id", userController.updateUser);
 
 app.post("/image", imageController.postImage);
 
+app.post("/review", reviewController.postReview);
 /**
  * API examples routes.
  */

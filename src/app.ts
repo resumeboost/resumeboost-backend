@@ -119,7 +119,8 @@ const upload = multer({
  * Primary app routes.
  */
 app.post("/login", userController.postLogin);
-app.get("/user", userController.getUser);
+app.get("/user", userController.getAllUsers);
+app.put("/adduser", userController.addUser);
 app.get("/logout", userController.logout);
 app.post("/signup", userController.postSignup);
 app.post("/user/update/:id", userController.updateUser);

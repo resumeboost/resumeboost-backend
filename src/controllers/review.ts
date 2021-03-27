@@ -106,13 +106,13 @@ export const getNextReview = async (
     });
 
     const targetUser = selectTargetUser(req, users);
-    const targetResume = selectActiveResume(targetUser);
+    const targetResumeLink = selectActiveResume(targetUser);
     // now, download the resume from the storage service
-    const path = await downloadFromS3(targetResume);
-    return res
-      .status(200)
-      .json("revieweeId: " + targetUser._id)
-      .download(path);
+    const data = await downloadFromS3(targetResumeLink);
+    const dataString = data.toString();
+
+    const response = { pdfData: dataString, revieweeId: targetUser._id };
+    return res.status(200).json(JSON.stringify(response));
   } catch (err) {
     console.log(err);
     return res.status(400).json("Error: " + err);

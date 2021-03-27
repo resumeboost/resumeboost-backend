@@ -21,3 +21,9 @@ export const uploadToS3 = async (req: Request, filename: string) => {
     .promise()
     .then((data) => data["Location"]);
 };
+
+// expecting a path to the downloaded file
+// TODO
+export const downloadFromS3 = async (link: string) => {
+  throw "not implemented";
+};

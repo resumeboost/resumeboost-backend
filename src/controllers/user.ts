@@ -305,36 +305,36 @@ export const getAllUsers = async (
 /**
  * Will use function to create users for testing purposes. Not in design document, purely for testing purposes.
  */
- export const addUser = async (
-  req: Request,
-  res: Response,
-  next: NextFunction
-) => {
-  try {
-    const email = req.body.email;
-    const password = req.body.password;
-    const points = Number(req.body.points);
-    const targetCompanies = req.body.targetCompanies;
-    const targetPositions = req.body.targetPositions;
-    const resumes = req.body.resumes;
-    const createdAt = req.body.createdAt;
+//  export const addUser = async (
+//   req: Request,
+//   res: Response,
+//   next: NextFunction
+// ) => {
+//   try {
+//     const email = req.body.email;
+//     const password = req.body.password;
+//     const points = Number(req.body.points);
+//     const targetCompanies = req.body.targetCompanies;
+//     const targetPositions = req.body.targetPositions;
+//     const resumes = req.body.resumes;
+//     const createdAt = req.body.createdAt;
 
-    const newUser = new User({
-      email,
-      password,
-      points,
-      targetCompanies,
-      targetPositions,
-      resumes,
-      createdAt,
-    });
+//     const newUser = new User({
+//       email,
+//       password,
+//       points,
+//       targetCompanies,
+//       targetPositions,
+//       resumes,
+//       createdAt,
+//     });
 
-    newUser
-      .save()
-      .then(() => res.json("User added to Database!"))
-      .catch((err) => res.status(400).json("Error: " + err));
-  } catch (e) {
-    console.log(e);
-    res.status(500).json(e);
-  }
-};
+//     newUser
+//       .save()
+//       .then(() => res.json("User added to Database!"))
+//       .catch((err) => res.status(400).json("Error: " + err));
+//   } catch (e) {
+//     console.log(e);
+//     res.status(500).json(e);
+//   }
+// };

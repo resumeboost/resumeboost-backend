@@ -122,7 +122,7 @@ app.get("/user", userController.getAllUsers);
 app.get("/logout", userController.logout);
 app.post("/signup", userController.postSignup);
 app.post("/user/update/:id", userController.updateUser);
-app.put("/addUser", userController.addUser);
+// app.put("/addUser", userController.addUser);
 app.put("/resume/:id/active", userController.putResumeActive);
 app.put("/user/:id/resume", upload, userController.updateUserResume);
 

@@ -1,15 +1,17 @@
-import passport from "passport";
-import { User, UserDocument } from "../models/User";
-import { Request, Response, NextFunction } from "express";
-import { IVerifyOptions } from "passport-local";
-import { check, sanitize, validationResult } from "express-validator";
 import "../config/passport";
+
 import S3 from "aws-sdk/clients/s3";
-import { AWS_BUCKET_NAME, AWS_ID, AWS_SECRET } from "../util/secrets";
+import { NextFunction, Request, Response } from "express";
+import { check, sanitize, validationResult } from "express-validator";
+import mongoose from "mongoose";
+import passport from "passport";
+import { IVerifyOptions } from "passport-local";
 import { v4 as uuidv4 } from "uuid";
+
+import { User, UserDocument } from "../models/User";
+import { AWS_BUCKET_NAME, AWS_ID, AWS_SECRET } from "../util/secrets";
 import { uploadToS3 } from "./api";
 
-import mongoose from "mongoose";
 mongoose.set("useFindAndModify", false);
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -179,20 +181,21 @@ export const postSignup = async (
   }
   const email = req.body.email;
   const password = req.body.password;
-  const points = Number(req.body.points);
-  const targetCompanies = req.body.targetCompanies;
-  const targetPositions = req.body.targetPositions;
-  const resumes = req.body.resumes;
-  const createdAt = req.body.createdAt;
+
+  // const points = Number(req.body.points);
+  // const targetCompanies = req.body.targetCompanies;
+  // const targetPositions = req.body.targetPositions;
+  // const resumes = req.body.resumes;
+  // const createdAt = req.body.createdAt;
 
   const user = new User({
     email,
     password,
-    points,
-    targetCompanies,
-    targetPositions,
-    resumes,
-    createdAt,
+    // points,
+    // targetCompanies,
+    // targetPositions,
+    // resumes,
+    // createdAt,
   });
 
   User.findOne({ email: req.body.email }, (err, existingUser) => {

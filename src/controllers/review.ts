@@ -18,7 +18,6 @@ export const postReview = async (
   res: Response,
   next: NextFunction
 ) => {
-
   const reviewee_id = req.body.revieweeId;
   const reviewer_id = req.body.reviewerId;
 
